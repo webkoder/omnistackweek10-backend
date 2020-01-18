@@ -39,5 +39,34 @@ module.exports = {
     
         console.log( dev )
         return response.json( dev )
+    },
+    async update(request, response){
+        const { techs, latitude, longitude } = request.body
+        const { id } = request.params
+
+        const dev = await Dev.findOne({_id: id})
+        dev.techs = parseStringAsArray( techs )
+        dev.location = {
+            type: "Point",
+            coordinates: [ latitude, longitude ]
+        }
+
+        await dev.save()
+
+        return response.json( dev )
+    },
+    async show(request, response){
+        const { id } = request.params
+
+        const dev = await Dev.findOne({_id: id})
+
+        return response.json( dev )
+    },
+    async destroy(request, response){
+        const { id } = request.params
+
+        await Dev.deleteOne({ _id: id })
+
+        return response.json( { message: `Deleted ${id}` } )
     }
 }
